@@ -1,0 +1,13 @@
+
+<<<<<<< HEAD
+admin@gmail.com
+messi@qsdq.com
+youssef.abidi@etu.uae.ac.ma
+=======
+abidi@gmail.com
+admin@gmail.com
+hello@hotmail.com
+messi@qsdq.com
+youssef.abidi@etu.uae.ac.ma.com
+zakaria.ait@gmail.com
+>>>>>>> fce70e90b0264db4a68713d783249d4b2b9e9d8e
