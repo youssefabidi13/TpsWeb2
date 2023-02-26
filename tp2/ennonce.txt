@@ -1,0 +1,53 @@
+
+
+L'objectif de ce TP est de développer une application web permettant aux clients d'un fournisseur d'électricité de saisir et consulter leurs factures d'électricité
+
+Les fonctionnalités de bases demandées:
+
+- Le client peut :
+
+Saisir sa consommation d'électricité chaque fin du mois et téléverser une photo du compteur d'electricite
+
+Afficher ses factures d'électricité 
+
+Faire une réclamation
+
+- Le fournisseur peut:
+
+Gérer les clients (ajout/ modification des informations des clients)
+
+Vérifier à la fin de chaque année les informations (concernant la consommation d'électricité) saisies par les clients 
+
+Générer les factures des clients: Chaque facture doit contenir les informations du client (nom, prénom, adresse...), la consommation et le prix (HT et TTC)
+
+Quelques détails
+
+- TVA: 14%
+
+- Prix unitaire par mois selon la consommation :
+
+   -<=100 KWH -> 0.91 DH Entre 101 et 200 KWH → 1.01 DH
+
+   -Plus que 201 KWH → 1,12 DH
+
+• Les clients sont répartis par zone géographique et chaque zone est gérée par un agent 
+
+•A la fin de chaque année, les agents déposent le fichier Consommation_annuelle.txt contenant la consommation annuelle de chaque client. Nous voulons automatiser l'insertion de cette consommation
+
+•La structure de ce fichier est la suivante (à modifier selon votre BD): ID Client <<Annee>>, ID ZoneGeog. Date Saisie
+
+• Ajouter une page pour afficher quelques informations synthétiques (dashboard) sur le montant des factures non payées, la consommation par mois, par Zone géographique ...
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Acteurs:
+
+Client: Utilisateur final de l'application, saisit sa consommation d'électricité, téléverse une photo de son compteur, affiche ses factures d'électricité et fait des réclamations.
+
+Fournisseur: Gère les clients, vérifie les informations de consommation, génère les factures et peut consulter les informations synthétiques.
+
+Agent: Gère une zone géographique de clients, saisit la consommation annuelle de chaque client et peut consulter les informations synthétiques.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
