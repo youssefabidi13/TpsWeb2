@@ -1,3 +1,101 @@
+<?php
+
+// Initialize the session
+session_start();
+ 
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(isset($_SESSION["loggedinClient"]) && $_SESSION["loggedinClient"] === true){
+    header("location: /Client/dashboard.php");
+    exit;
+}
+ 
+// Include config file
+require_once "config.php";
+ 
+// Define variables and initialize with empty values
+$email = $password_s = "";
+$email_err = $password_err = $login_err = "";
+ 
+// Processing form data when form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+ 
+    // Check if email is empty
+    if(empty(trim($_POST["email"]))){
+        $email_err = "Please enter email.";
+    } else{
+        $email = trim($_POST["email"]);
+    }
+    
+    // Check if password is empty
+    if(empty(trim($_POST["password"]))){
+        $password_err = "Please enter your password.";
+    } else{
+        $password_s = trim($_POST["password"]);
+    }
+    
+    // Validate credentials
+    if(empty($email_err) && empty($password_err)){
+        // Prepare a select statement
+        $sql = "SELECT id, email, nom,prenom ,password FROM client WHERE email = ?";
+        
+        if($stmt = $mysqli->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("s", $param_email);
+            
+            // Set parameters
+            $param_email = $email;
+            
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                // Store result
+                $stmt->store_result();
+                
+                // Check if email exists, if yes then verify password
+                if($stmt->num_rows == 1){                    
+                    // Bind result variables
+                    $stmt->bind_result($id, $email,$nom,$prenom,$password);
+                    if($stmt->fetch()){
+                        if($password == $password_s){
+                          session_start();
+ 
+                          // Unset all of the session variables
+                          $_SESSION = array();
+                           
+                          // Destroy the session.
+                          session_destroy();                            
+                          session_start();
+                            
+                            // Store data in session variables
+                            $_SESSION["loggedinClient"] = true;
+                            $_SESSION["id"] = $id;
+                            $_SESSION["email"] = $email;       
+                            $_SESSION["nom"] = $nom; 
+                            $_SESSION["prenom"] = $prenom;                            
+                                                                     
+                            // Redirect user to welcome page
+                            header("location: /Client/dashboard.php");
+                        } else{
+                             // Password is not valid, display a generic error message
+                             $login_err = "Invalid email or password.";
+                         }
+                    }
+                } else{
+                    // email doesn't exist, display a generic error message
+                    $login_err = "Invalid email or password.";
+                }
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            $stmt->close();
+        }
+    }
+    
+    // Close connection
+    $mysqli->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,9 +119,9 @@
         <ul class="navbar-nav mx-auto">
           <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
           <li class="nav-item"></li>
-          <li class="nav-item"><a class="nav-link" href="/loginAgent.html">Agent</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/loginClient.html">Client</a></li>
-          <li class="nav-item"><a class="nav-link" href="/loginFournisseur.html">Fournisseur</a></li>
+          <li class="nav-item"><a class="nav-link" href="/loginAgent.php">Agent</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/loginClient.php">Client</a></li>
+          <li class="nav-item"><a class="nav-link" href="/loginFournisseur.php">Fournisseur</a></li>
           <li class="nav-item"></li>
         </ul>
       </div>
@@ -36,9 +134,22 @@
             src="/assets/img/illustrations/login.svg?h=dd35c7dba58803954242d42488889a4c"></div>
         <div class="col-md-5 col-xl-4 text-center text-md-start">
           <h2 class="display-6 fw-bold mb-5"><span class="underline pb-1"><strong>Login</strong><br></span></h2>
-          <form method="post">
-            <div class="mb-3"><input class="shadow form-control" type="email" name="email" placeholder="Email"></div>
-            <div class="mb-3"><input class="shadow form-control" type="password" name="password" placeholder="Password">
+          <?php 
+        if(!empty($login_err)){
+            echo '<div class="alert alert-danger">' . $login_err . '</div>';
+        }        
+        ?>
+          <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <div class="mb-3">
+              <input class="shadow form-control<?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>" 
+                type="email" name="email" placeholder="Email" value="<?php echo $email; ?>" />
+                <span class="invalid-feedback"><?php echo $email_err; ?></span>
+            </div>
+            <div class="mb-3"><input class="shadow form-control<?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
+             type="password" name="password"
+                placeholder="Password" />
+                <span class="invalid-feedback"><?php echo $password_err; ?></span>
+
             </div>
             <div class="mb-5"><button class="btn btn-primary shadow" type="submit">Log in</button></div>
             <p class="text-muted"><a href="/forgotten-password.html">Forgot your password?</a></p>

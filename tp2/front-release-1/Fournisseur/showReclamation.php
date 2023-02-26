@@ -1,3 +1,14 @@
+<?php
+require_once "../config.php";
+// Initialize the session
+session_start();
+ 
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedinFournisseur"]) || $_SESSION["loggedinFournisseur"] !== true){
+    header("location: ../loginFournisseur.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -47,22 +58,22 @@
         >
           <ul class="navbar-nav mx-auto">
             <li class="nav-item">
-              <a class="nav-link" href="dashboard_fournisseur.html"
+              <a class="nav-link" href="dashboard_fournisseur.php"
                 >Dashboard</a
               >
             </li>
             <li class="nav-item"></li>
             <li class="nav-item">
-              <a class="nav-link" href="verify.html"
+              <a class="nav-link" href="verify.php"
                 >Verification des informations</a
               >
             </li>
             <li class="nav-item"></li>
             <li class="nav-item">
-              <a class="nav-link" href="showReclamation.html">Reclamation</a>
+              <a class="nav-link active" href="showReclamation.php">Reclamation</a>
             </li>
           </ul>
-          <button class="btn btn-primary" type="button">logout</button>
+          <a class="btn btn-primary" href="logout.php">logout</a>
         </div>
       </div>
     </nav>
